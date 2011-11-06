@@ -1,10 +1,75 @@
 #include <fstream> 
 #include <iostream>
+#include <vector>
+#include <stack>
+#include <stdbool.h>
 
 using namespace std;
 
-///asdf
-//
+typedef struct node {
+    int value;
+    struct node *leader;
+    std::vector<struct node * > outEdges, inEdges;
+    bool visited, reverseVisited;
+} Node;
+
+int visitedCounter, numNodes;
+Node *nodeArray, *baseNode;
+std::stack<Node * > nodeStack;
+
+void visitNode(Node *node, bool isReverse) {
+    if (node) {
+        bool *visitedBool = isReverse ? &(node->reverseVisited) : &(node->visited);
+        *visitedBool = true;
+    }
+}
+
+inline bool isNodeVisited(Node *node, bool isReverse) {
+    return isReverse ? node->reverseVisited : node->visited;
+}
+
+// node index i is from 1 to numNodes, so we must correct it
+// when accessing a zero-based array.
+inline Node *getNode(int i, bool isReverse) {
+    return isReverse ? &(nodeArray[i-1]) : nodeStack.top();
+}
+
+inline std::vector<Node * > getAccessibleNodes(Node *node, bool isReverse) {
+    return isReverse ? node->inEdges : node->outEdges;
+}
+
+void DFS(Node *node, bool isReverse) {
+    visitNode(node,isReverse);
+    node->leader = baseNode;
+
+    std::vector<Node * > accessibleNodes = getAccessibleNodes(node,isReverse);
+    for (int i = 0; i < accessibleNodes.size(); i++) {
+        if (!isNodeVisited(accessibleNodes[i],isReverse)) {
+            DFS(accessibleNodes[i],isReverse);
+        }
+    }
+
+    visitedCounter++;
+    node->value = visitedCounter;
+}
+
+void DFSLoop(bool isReverse) {
+    visitedCounter = 0;
+    baseNode = NULL;
+    for (int i = numNodes; i > 0; i--) {
+        Node *node = getNode(i,isReverse);
+        if (!isReverse) nodeStack.pop();
+        if (!isNodeVisited(node,isReverse)) {
+            baseNode = node;
+            DFS(node, isReverse);
+        }
+    }
+}
+
+void readGraphIntoArray(char *inputFile) {
+
+}
+
 /**
  * Given an input file (inputFile) and an integer array (out) of size 5, fills
  * the 5 largest SCC sizes into (out) in decreasing order. In the case where
@@ -19,6 +84,11 @@ using namespace std;
  */
 void findSccs(char* inputFile, int out[5])
 {
+    readGraphIntoArray(inputFile);
+
+    DFSLoop(true);
+    DFSLoop(false);
+
     // TODO: Implement this function.
     out[0] = 0;
     out[1] = 0;
