@@ -70,15 +70,20 @@ void DFS(Node *startNode, bool isReverse) {
     stack<Node * >dfsStack;
     dfsStack.push(startNode);
     while (!dfsStack.empty()) {
+        // Inspect the top node in the stack.
         Node *node = dfsStack.top();
         dfsStack.pop();
         visitNode(node,isReverse);
 
         vector<Node * > *accessibleNodes = getAccessibleNodes(node,isReverse);
         if ((*accessibleNodes).empty()) {
+            // If there are no accessible nodes, then it's either a
+            // leaf node or a node that has already been visited.
             if (isReverse) nodeStack.push(node);
             else sccSize ++;
         } else {
+            // If there are nodes, we want to do a DFS on all these
+            // children nodes, so we add them to the DFS stack.
             dfsStack.push(node);
             for (int i = 0; i < (*accessibleNodes).size(); i++) {
                 Node *childNode = (*accessibleNodes)[i];
@@ -89,6 +94,7 @@ void DFS(Node *startNode, bool isReverse) {
             clearAccessibleNodes(node,isReverse);
         }
     }
+
     if (!isReverse) sccSizes.push(sccSize);
 }
 
