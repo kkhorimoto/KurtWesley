@@ -6,20 +6,35 @@
 
 using namespace std;
 
+/*
+ * Node struct definition.
+ */
+
 typedef struct node {
     struct node *leader;
-    std::vector<struct node * > outEdges, inEdges;
+    vector<struct node * > outEdges, inEdges;
     bool visited, reverseVisited;
 } Node;
 
+/*
+ * Global Variables
+ */
+
 int visitedCounter, numNodes;
 Node *nodeArray, *baseNode;
-std::stack<Node * > nodeStack;
+stack<Node * > nodeStack;
+std::priority_queue<int> sccSizes;
+
+/*
+ * Node visiting helper functions
+ */
 
 void visitNode(Node *node, bool isReverse) {
     if (node) {
         bool *visitedBool = isReverse ? &(node->reverseVisited) : &(node->visited);
         *visitedBool = true;
+
+        node->leader = baseNode;
     }
 }
 
@@ -27,28 +42,53 @@ inline bool isNodeVisited(Node *node, bool isReverse) {
     return isReverse ? node->reverseVisited : node->visited;
 }
 
-// node index i is from 1 to numNodes, so we must correct it
-// when accessing a zero-based array.
+/*
+ * Node Access functions.
+ */
+
 inline Node *getNode(int i, bool isReverse) {
     return isReverse ? &(nodeArray[i-1]) : nodeStack.top();
 }
 
-inline std::vector<Node * > getAccessibleNodes(Node *node, bool isReverse) {
+inline vector<Node * > *getAccessibleNodes(Node *node, bool isReverse) {
     return isReverse ? &(node->inEdges) : &(node->outEdges);
 }
 
-void DFS(Node *node, bool isReverse) {
-    visitNode(node,isReverse);
-    node->leader = baseNode;
+inline void clearAccessibleNodes(Node *node, bool isReverse) {
+    vector<Node *> *accessibleNodes = getAccessibleNodes(node,isReverse);
+    (*accessibleNodes).clear();
+}
 
-    std::vector<Node * > *accessibleNodes = getAccessibleNodes(node,isReverse);
-    for (int i = 0; i < (*accessibleNodes).size(); i++) {
-        if (!isNodeVisited(accessibleNodes[i],isReverse)) {
-            DFS(accessibleNodes[i],isReverse);
+/*
+ * DFS functions.
+ */
+
+void DFS(Node *startNode, bool isReverse) {
+    int sccSize = 0;
+
+    stack<Node * >dfsStack;
+    dfsStack.push(startNode);
+    while (!dfsStack.empty()) {
+        Node *node = dfsStack.top();
+        dfsStack.pop();
+        visitNode(node,isReverse);
+
+        vector<Node * > *accessibleNodes = getAccessibleNodes(node,isReverse);
+        if ((*accessibleNodes).empty()) {
+            if (isReverse) nodeStack.push(node);
+            else sccSize ++;
+        } else {
+            dfsStack.push(node);
+            for (int i = 0; i < (*accessibleNodes).size(); i++) {
+                Node *childNode = (*accessibleNodes)[i];
+                if (!isNodeVisited(childNode,isReverse)) {
+                    dfsStack.push(childNode);
+                }
+            }
+            clearAccessibleNodes(node,isReverse);
         }
     }
-
-    if (isReverse) nodeStack.push(node);
+    if (!isReverse) sccSizes.push(sccSize);
 }
 
 void DFSLoop(bool isReverse) {
@@ -58,13 +98,29 @@ void DFSLoop(bool isReverse) {
         if (!isReverse) nodeStack.pop();
         if (!isNodeVisited(node,isReverse)) {
             baseNode = node;
-            DFS(node, isReverse);
+            DFS(node,isReverse);
         }
     }
 }
 
+/*
+ * File Reading
+ */
+
 void readGraphIntoArray(char *inputFile) {
 
+}
+
+/*
+ * Extracting the largest scc size
+ */
+
+void populateOutArray(int out[5]) {
+    int numberOfSCCs = sccSizes.size();
+    for (int i = 0; i < numberOfSCCs; i++) {
+        out[i] = sccSizes.top();
+        sccSizes.pop();
+    }
 }
 
 /**
@@ -86,12 +142,7 @@ void findSccs(char* inputFile, int out[5])
     DFSLoop(true);
     DFSLoop(false);
 
-    // TODO: Implement this function.
-    out[0] = 0;
-    out[1] = 0;
-    out[2] = 0;
-    out[3] = 0;
-    out[4] = 0;
+    populateOutArray(out);
 }
 
 /*
@@ -105,14 +156,14 @@ void findSccs(char* inputFile, int out[5])
  */
 int main(int argc, char* argv[])
 {
-    int sccSizes[5];
+    int sccSizes[] = {0, 0, 0, 0, 0};
     char* inputFile = argv[1];
     char* outputFile = argv[2];
 
     findSccs(inputFile, sccSizes);
 	
     // Output the first 5 sccs into a file.
-    std::ofstream os;
+    ofstream os;
     os.open(outputFile);
     os << sccSizes[0] << "\t" << sccSizes[1] << "\t" << sccSizes[2] <<
       "\t" << sccSizes[3] << "\t" << sccSizes[4];
