@@ -109,7 +109,7 @@ void DFSLoop(bool isReverse) {
  */
 
 void readGraphIntoArray(char *inputFile) {
-
+    //TODO: read the input file and populate the graph into the nodeArray global variable. 
 }
 
 /*
