@@ -151,12 +151,7 @@ bool readGraphIntoArray(char *inputFile) {
       int start,end;
       file >> start >> end;
 
-      /*
-      vector<node *> tempOut = nodeArray[start].outEdges;
-      tempOut.push_back(&nodeArray[end]);
-      //  memcpy(nodeArray[start],tempOut, s)
-      */
-      nodeArray[start].outEdges.push_back(&nodeArray[end]);
+      addEdge(start,end);
       printf("%d %d\n", start, end);
     }
   }
