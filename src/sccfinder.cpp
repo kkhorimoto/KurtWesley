@@ -7,7 +7,6 @@
 using namespace std;
 
 typedef struct node {
-    int value;
     struct node *leader;
     std::vector<struct node * > outEdges, inEdges;
     bool visited, reverseVisited;
@@ -49,12 +48,10 @@ void DFS(Node *node, bool isReverse) {
         }
     }
 
-    visitedCounter++;
-    node->value = visitedCounter;
+    if (isReverse) nodeStack.push(node);
 }
 
 void DFSLoop(bool isReverse) {
-    visitedCounter = 0;
     baseNode = NULL;
     for (int i = numNodes; i > 0; i--) {
         Node *node = getNode(i,isReverse);
