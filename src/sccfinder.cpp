@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <stack>
+#include <queue>
 #include <stdbool.h>
 
 using namespace std;
@@ -23,7 +24,7 @@ typedef struct node {
 int visitedCounter, numNodes;
 Node *nodeArray, *baseNode;
 stack<Node * > nodeStack;
-std::priority_queue<int> sccSizes;
+priority_queue<int> sccSizes;
 
 /*
  * Node visiting helper functions
