@@ -139,7 +139,7 @@ void readGraphIntoArray(char *inputFile) {
 
 void populateOutArray(int out[5]) {
     int numberOfSCCs = sccSizes.size();
-    for (int i = 0; i < numberOfSCCs; i++) {
+    for (int i = 0; i < numberOfSCCs && i < 5; i++) {
         out[i] = sccSizes.top();
         sccSizes.pop();
     }
