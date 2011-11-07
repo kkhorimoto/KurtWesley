@@ -129,9 +129,42 @@ void addEdge(int srcNodeIndex, int dstNodeIndex) {
     (dstNode->inEdges).push_back(srcNode);
 }
 
-void readGraphIntoArray(char *inputFile) {
-    //TODO: read the input file and populate the graph into the nodeArray global variable. 
+bool readGraphIntoArray(char *inputFile) {
+
+ 
+  ifstream file;
+  file.open(inputFile);
+  char * buffer;
+  
+  if(!file) {
+    cout << endl << "Error opening file " << inputFile; 
+    return false;
+  }
+
+  if(file.is_open()) {
+    int numNodes, numEdges;
+    file >> numNodes >> numEdges;
+    setNumberOfNodes(numNodes);
+    setNumberOfEdges(numEdges); //doesnt do anything 
+    
+    while(!file.eof()) {
+      int start,end;
+      file >> start >> end;
+
+      /*
+      vector<node *> tempOut = nodeArray[start].outEdges;
+      tempOut.push_back(&nodeArray[end]);
+      //  memcpy(nodeArray[start],tempOut, s)
+      */
+      nodeArray[start].outEdges.push_back(&nodeArray[end]);
+      printf("%d %d\n", start, end);
+    }
+  }
+
+  file.close();
+  return true;
 }
+
 
 /*
  * Extracting the largest scc size
@@ -159,12 +192,12 @@ void populateOutArray(int out[5]) {
  */
 void findSccs(char* inputFile, int out[5])
 {
-    readGraphIntoArray(inputFile);
-
-    DFSLoop(true);
-    DFSLoop(false);
-
-    populateOutArray(out);
+    bool readSuccess = readGraphIntoArray(inputFile);
+    if (readSuccess) {
+  	DFSLoop(true);
+    	DFSLoop(false);
+        populateOutArray(out);
+    }
 }
 
 /*
