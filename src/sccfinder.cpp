@@ -35,15 +35,15 @@ inline Node *getNode(int i, bool isReverse) {
 }
 
 inline std::vector<Node * > getAccessibleNodes(Node *node, bool isReverse) {
-    return isReverse ? node->inEdges : node->outEdges;
+    return isReverse ? &(node->inEdges) : &(node->outEdges);
 }
 
 void DFS(Node *node, bool isReverse) {
     visitNode(node,isReverse);
     node->leader = baseNode;
 
-    std::vector<Node * > accessibleNodes = getAccessibleNodes(node,isReverse);
-    for (int i = 0; i < accessibleNodes.size(); i++) {
+    std::vector<Node * > *accessibleNodes = getAccessibleNodes(node,isReverse);
+    for (int i = 0; i < (*accessibleNodes).size(); i++) {
         if (!isNodeVisited(accessibleNodes[i],isReverse)) {
             DFS(accessibleNodes[i],isReverse);
         }
