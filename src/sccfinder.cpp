@@ -109,7 +109,7 @@ void DFSLoop(bool isReverse) {
  */
 
 void setNumberOfNodes(int numberOfNodes) {
-    nodeArray = malloc(numberOfNodes * sizeof(Node));
+    nodeArray = (Node *)malloc(numberOfNodes * sizeof(Node));
 }
 
 void setNumberOfEdges(int numberOfEdges) {
