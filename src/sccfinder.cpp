@@ -108,6 +108,21 @@ void DFSLoop(bool isReverse) {
  * File Reading
  */
 
+void setNumberOfNodes(int numberOfNodes) {
+    nodeArray = malloc(numberOfNodes * sizeof(Node));
+}
+
+void setNumberOfEdges(int numberOfEdges) {
+    // We don't use this data yet, but it might come in hand later.
+}
+
+void addEdge(int srcNodeIndex, int dstNodeIndex) {
+    Node *srcNode = &nodeArray[srcNodeIndex - 1];
+    Node *dstNode = &nodeArray[dstNodeIndex - 1];
+    (srcNode->outEdges).push_back(dstNode);
+    (dstNode->inEdges).push_back(srcNode);
+}
+
 void readGraphIntoArray(char *inputFile) {
     //TODO: read the input file and populate the graph into the nodeArray global variable. 
 }
