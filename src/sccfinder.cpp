@@ -50,7 +50,13 @@ inline bool isNodeVisited(Node *node, bool isReverse) {
  */
 
 inline Node *getNode(int i, bool isReverse) {
-    return isReverse ? &(nodeArray[i-1]) : nodeStack.top();
+    if (isReverse) {
+        return &(nodeArray[i-1]);
+    } else {
+        Node *node = nodeStack.top();
+        nodeStack.pop();
+        return node;
+    }
 }
 
 inline vector<Node * > *getAccessibleNodes(Node *node, bool isReverse) {
@@ -127,7 +133,6 @@ void DFS(Node *startNode, bool isReverse) {
 void DFSLoop(bool isReverse) {
     for (int i = numNodes; i > 0; i--) {
         Node *node = getNode(i,isReverse);
-        if (!isReverse) nodeStack.pop();
         if (!isNodeVisited(node,isReverse)) {
             DFS(node,isReverse);
         }
