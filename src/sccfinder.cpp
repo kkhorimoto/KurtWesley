@@ -17,7 +17,7 @@ using namespace std;
 
 typedef struct Node {
     vector<Node * > outEdges, inEdges;
-    bool visited, reverseVisited, isMemberOfSCC;
+    bool visited, reverseVisited, isMemberOfSCC, isMemberOfNodeStack;
     int label;
 };
 
@@ -92,15 +92,19 @@ void DFS(Node *startNode, bool isReverse) {
         dfsStack.pop();
         visitNode(node,isReverse);
         
-        vector<Node * > *accessibleNodes = getAccessibleNodes(node,isReverse);
-        if ((*accessibleNodes).empty()) {
+        vector<Node * > *childrenNodes = getChildrenNodes(node,isReverse);
+        if ((*childrenNodes).empty()) {
             // If there are no accessible nodes, then it's either a
             // leaf node or a node that has already been visited.
-            if (isReverse) nodeStack.push(node);
-	        else {
+            if (isReverse) {
+                if (!node->isMemberOfNodeStack) {
+                    node->isMemberOfNodeStack = true;
+                    nodeStack.push(node);
+                }
+            } else {
 		        if (!node->isMemberOfSCC) {
-			        sccSize++;
 			        node->isMemberOfSCC = true;
+			        sccSize++;
 		        }
 	        }
 
