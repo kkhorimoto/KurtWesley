@@ -4,6 +4,7 @@
 #include <stack>
 #include <queue>
 #include <stdbool.h>
+#include <string.h>
 
 using namespace std;
 
@@ -116,6 +117,11 @@ void DFSLoop(bool isReverse) {
 
 void setNumberOfNodes(int numberOfNodes) {
     nodeArray = (Node *)malloc(numberOfNodes * sizeof(Node));
+
+    Node node;
+    for (int i = 0; i < numberOfNodes; i++) {
+        memcpy(&nodeArray[i],&node,sizeof(node));
+    }
 }
 
 void setNumberOfEdges(int numberOfEdges) {
@@ -130,8 +136,6 @@ void addEdge(int srcNodeIndex, int dstNodeIndex) {
 }
 
 bool readGraphIntoArray(char *inputFile) {
-
- 
   ifstream file;
   file.open(inputFile);
   char * buffer;
@@ -189,7 +193,7 @@ void findSccs(char* inputFile, int out[5])
 {
     bool readSuccess = readGraphIntoArray(inputFile);
     if (readSuccess) {
-  	DFSLoop(true);
+  	    DFSLoop(true);
     	DFSLoop(false);
         populateOutArray(out);
     }
