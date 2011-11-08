@@ -115,6 +115,7 @@ void DFS(Node *startNode, bool isReverse) {
     }
     
 #if PRINT_DFS_DETAILS
+    printf("SCC Size = %d",sccSize);
     printf("\n\n");
 #endif
 
