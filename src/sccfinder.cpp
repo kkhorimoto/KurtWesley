@@ -59,13 +59,8 @@ inline Node *getNode(int i, bool isReverse) {
     }
 }
 
-inline vector<Node * > *getAccessibleNodes(Node *node, bool isReverse) {
+inline vector<Node * > *getChildrenNodes(Node *node, bool isReverse) {
     return isReverse ? &(node->inEdges) : &(node->outEdges);
-}
-
-inline void clearAccessibleNodes(Node *node, bool isReverse) {
-    vector<Node *> *accessibleNodes = getAccessibleNodes(node,isReverse);
-    (*accessibleNodes).clear();
 }
 
 /*
@@ -116,12 +111,13 @@ void DFS(Node *startNode, bool isReverse) {
             // If there are nodes, we want to do a DFS on all these
             // children nodes, so we add them to the DFS stack.
             dfsStack.push(node);
-            for (int i = 0; i < (*accessibleNodes).size(); i++) {
-                Node *childNode = (*accessibleNodes).back();
+            int numberOfChildren = (*childrenNodes).size();
+            for (int i = 0; i < numberOfChildren; i++) {
+                Node *childNode = (*childrenNodes).back();
                 if (!isNodeVisited(childNode,isReverse)) {
                     dfsStack.push(childNode);
                 }
-    		    (*accessibleNodes).pop_back();
+    		    (*childrenNodes).pop_back();
             }
         }
     }
