@@ -70,6 +70,13 @@ void DFS(Node *startNode, bool isReverse) {
     
     stack<Node * >dfsStack;
     dfsStack.push(startNode);
+
+    if (isReverse) {
+        printf("Starting reverse DFS:\n");
+    } else {
+        printf("Starting second DFS:\n");
+    }
+
     while (!dfsStack.empty()) {
         // Inspect the top node in the stack.
         Node *node = dfsStack.top();
@@ -82,6 +89,7 @@ void DFS(Node *startNode, bool isReverse) {
             // leaf node or a node that has already been visited.
             if (isReverse) nodeStack.push(node);
             else sccSize ++;
+            printf("\tNode %d explored.\n", node->label);
         } else {
             // If there are nodes, we want to do a DFS on all these
             // children nodes, so we add them to the DFS stack.
@@ -96,6 +104,8 @@ void DFS(Node *startNode, bool isReverse) {
         }
     }
     
+    printf("\n\n");
+
     if (!isReverse) sccSizes.push(sccSize);
 }
 
