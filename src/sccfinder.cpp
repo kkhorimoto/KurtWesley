@@ -148,7 +148,6 @@ void setNumberOfNodes(int numberOfNodes) {
     nodeArray = (Node *)malloc(numberOfNodes * sizeof(Node));
     
     Node node;
-    node.isMemberOfSCC = false;
     for (int i = 0; i < numberOfNodes; i++) {
         node.label = i+1;
         memcpy(&nodeArray[i],&node,sizeof(node));
