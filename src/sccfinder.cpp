@@ -5,6 +5,10 @@
 #include <queue>
 #include <stdbool.h>
 
+#define PRINT_INPUT_FILE 0
+#define PRINT_NODE_ARRAY 0
+#define PRINT_DFS_DETAILS 1
+
 using namespace std;
 
 /*
@@ -71,11 +75,13 @@ void DFS(Node *startNode, bool isReverse) {
     stack<Node * >dfsStack;
     dfsStack.push(startNode);
 
+#if PRINT_DFS_DETAILS
     if (isReverse) {
         printf("Starting reverse DFS:\n");
     } else {
         printf("Starting second DFS:\n");
     }
+#endif
 
     while (!dfsStack.empty()) {
         // Inspect the top node in the stack.
@@ -89,7 +95,10 @@ void DFS(Node *startNode, bool isReverse) {
             // leaf node or a node that has already been visited.
             if (isReverse) nodeStack.push(node);
             else sccSize ++;
+
+#if PRINT_DFS_DETAILS
             printf("\tNode %d explored.\n", node->label);
+#endif
         } else {
             // If there are nodes, we want to do a DFS on all these
             // children nodes, so we add them to the DFS stack.
@@ -104,7 +113,9 @@ void DFS(Node *startNode, bool isReverse) {
         }
     }
     
+#if PRINT_DFS_DETAILS
     printf("\n\n");
+#endif
 
     if (!isReverse) sccSizes.push(sccSize);
 }
@@ -171,7 +182,10 @@ bool readGraphIntoArray(char *inputFile) {
             file >> start >> end;
             
             addEdge(start,end);
+
+#if PRINT_INPUT_FILE
             printf("%d %d\n", start, end);
+#endif
         }
     }
     
@@ -223,7 +237,11 @@ void printNodeArray() {
 void findSccs(char* inputFile, int out[5])
 {
     bool readSuccess = readGraphIntoArray(inputFile);
+
+#if PRINT_NODE_ARRAY
     printNodeArray();
+#endif
+
     if (readSuccess) {
         DFSLoop(true);
     	DFSLoop(false);
