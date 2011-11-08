@@ -18,7 +18,7 @@ using namespace std;
 typedef struct Node {
     struct Node *leader;
     vector<Node * > outEdges, inEdges;
-    bool visited, reverseVisited;
+    bool visited, reverseVisited, isMemberOfSCC;
     int label;
 };
 
@@ -26,7 +26,7 @@ typedef struct Node {
  * Global Variables
  */
 
-int visitedCounter, numNodes;
+int numNodes;
 Node *nodeArray, *baseNode;
 stack<Node * > nodeStack;
 priority_queue<int> sccSizes;
@@ -94,7 +94,12 @@ void DFS(Node *startNode, bool isReverse) {
             // If there are no accessible nodes, then it's either a
             // leaf node or a node that has already been visited.
             if (isReverse) nodeStack.push(node);
-            else sccSize ++;
+	    else {
+		if (!node->isMemberOfSCC) {
+			sccSize++;
+			node->isMemberOfSCC = true;
+		}
+	    }
 
 #if PRINT_DFS_DETAILS
             printf("\tNode %d explored.\n", node->label);
@@ -105,12 +110,12 @@ void DFS(Node *startNode, bool isReverse) {
             // children nodes, so we add them to the DFS stack.
             dfsStack.push(node);
             for (int i = 0; i < (*accessibleNodes).size(); i++) {
-                Node *childNode = (*accessibleNodes)[i];
+                Node *childNode = (*accessibleNodes).back();
                 if (!isNodeVisited(childNode,isReverse)) {
                     dfsStack.push(childNode);
                 }
+		(*accessibleNodes).pop_back();
             }
-            clearAccessibleNodes(node,isReverse);
         }
     }
     
@@ -143,6 +148,7 @@ void setNumberOfNodes(int numberOfNodes) {
     nodeArray = (Node *)malloc(numberOfNodes * sizeof(Node));
     
     Node node;
+    node.isMemberOfSCC = false;
     for (int i = 0; i < numberOfNodes; i++) {
         memcpy(&nodeArray[i],&node,sizeof(node));
     }
