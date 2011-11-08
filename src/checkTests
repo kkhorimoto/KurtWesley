@@ -1,0 +1,36 @@
+#!/bin/sh
+
+#Compile and clean
+make clean
+make
+
+#Run the code
+./sccfinder ./in/1 ./out/1
+diff ./out/1 ./cout/1 
+
+./sccfinder ./in/2 ./out/2
+diff ./out/2 ./cout/2 
+
+./sccfinder ./in/3 ./out/3
+diff ./out/3 ./cout/3 
+
+./sccfinder ./in/4 ./out/4
+diff ./out/4 ./cout/4
+
+./sccfinder ./in/5 ./out/5
+diff ./out/5 ./cout/5 
+
+./sccfinder ./in/6 ./out/6
+diff ./out/6 ./cout/6
+
+./sccfinder ./in/7 ./out/7
+diff ./out/7 ./cout/7
+
+./sccfinder ./in/8 ./out/8
+diff ./out/8 ./cout/8
+
+./sccfinder ./in/9 ./out/9
+diff ./out/9 ./cout/9
+
+./sccfinder ./in/10 ./out/10
+diff ./out/10 ./cout/10 
