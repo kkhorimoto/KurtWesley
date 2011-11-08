@@ -99,6 +99,7 @@ void DFS(Node *startNode, bool isReverse) {
 #if PRINT_DFS_DETAILS
             printf("\tNode %d explored.\n", node->label);
 #endif
+
         } else {
             // If there are nodes, we want to do a DFS on all these
             // children nodes, so we add them to the DFS stack.
@@ -186,6 +187,7 @@ bool readGraphIntoArray(char *inputFile) {
 #if PRINT_INPUT_FILE
             printf("%d %d\n", start, end);
 #endif
+
         }
     }
     
