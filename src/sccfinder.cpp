@@ -7,7 +7,7 @@
 
 #define PRINT_INPUT_FILE 0
 #define PRINT_NODE_ARRAY 0
-#define PRINT_DFS_DETAILS 1
+#define PRINT_DFS_DETAILS 0
 
 using namespace std;
 
@@ -94,12 +94,12 @@ void DFS(Node *startNode, bool isReverse) {
             // If there are no accessible nodes, then it's either a
             // leaf node or a node that has already been visited.
             if (isReverse) nodeStack.push(node);
-	    else {
-		if (!node->isMemberOfSCC) {
-			sccSize++;
-			node->isMemberOfSCC = true;
-		}
-	    }
+	        else {
+		        if (!node->isMemberOfSCC) {
+			        sccSize++;
+			        node->isMemberOfSCC = true;
+		        }
+	        }
 
 #if PRINT_DFS_DETAILS
             printf("\tNode %d explored.\n", node->label);
@@ -114,7 +114,7 @@ void DFS(Node *startNode, bool isReverse) {
                 if (!isNodeVisited(childNode,isReverse)) {
                     dfsStack.push(childNode);
                 }
-		(*accessibleNodes).pop_back();
+    		    (*accessibleNodes).pop_back();
             }
         }
     }
@@ -150,6 +150,7 @@ void setNumberOfNodes(int numberOfNodes) {
     Node node;
     node.isMemberOfSCC = false;
     for (int i = 0; i < numberOfNodes; i++) {
+        node.label = i+1;
         memcpy(&nodeArray[i],&node,sizeof(node));
     }
 }
@@ -165,8 +166,6 @@ void addEdge(int srcNodeIndex, int dstNodeIndex) {
     Node *dstNode = &nodeArray[dstNodeIndex - 1];
     (srcNode->outEdges).push_back(dstNode);
     (dstNode->inEdges).push_back(srcNode);
-    srcNode->label = srcNodeIndex;
-    dstNode->label = dstNodeIndex;
 }
 
 bool readGraphIntoArray(char *inputFile) {
