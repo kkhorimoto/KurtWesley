@@ -5,20 +5,20 @@
 #include <queue>
 #include <stdbool.h>
 
-#define PRINT_INPUT_FILE 0
-#define PRINT_NODE_ARRAY 0
-#define PRINT_DFS_DETAILS 0
-
 using namespace std;
 
 /*
  * Node struct definition.
  */
 
+const int visitedMask =             1;
+const int reverseVisitedMask =      1<<1;
+const int isMemberOfSCCMask =       1<<2;
+const int isMemberOfNodeStackMask = 1<<3;
+
 typedef struct Node {
-    vector<Node * > outEdges, inEdges;
-    bool visited, reverseVisited, isMemberOfSCC, isMemberOfNodeStack;
-    int label;
+    vector<Node * > children, parents;
+    int metadata;
 };
 
 /*
@@ -34,15 +34,29 @@ priority_queue<int> sccSizes;
  * Node visiting helper functions
  */
 
-void visitNode(Node *node, bool isReverse) {
-    if (node) {
-        bool *visitedBool = isReverse ? &(node->reverseVisited) : &(node->visited);
-        *visitedBool = true;
-    }
+inline void visitNode(Node *node, bool isReverse) {
+    node->metadata |= (isReverse ? reverseVisitedMask : visitedMask);
 }
 
 inline bool isNodeVisited(Node *node, bool isReverse) {
-    return isReverse ? node->reverseVisited : node->visited;
+    return (bool) (node->metadata & (isReverse ? reverseVisitedMask : visitedMask));
+}
+
+inline void addNodeToSCC(Node *node) {
+    node->metadata |= isMemberOfSCCMask;
+}
+
+inline bool isNodeMemberOfSCC(Node *node) {
+    return (bool)(node->metadata & isMemberOfSCCMask);
+}
+
+inline void addNodeToNodeStack(Node *node) {
+    node->metadata |= isMemberOfNodeStackMask;
+    nodeStack.push(node);
+}
+
+inline bool isNodeMemberOfNodeStack(Node *node) {
+    return (bool)(node->metadata & isMemberOfNodeStackMask);
 }
 
 /*
@@ -50,17 +64,16 @@ inline bool isNodeVisited(Node *node, bool isReverse) {
  */
 
 inline Node *getNode(int i, bool isReverse) {
-    if (isReverse) {
-        return &(nodeArray[i-1]);
-    } else {
+    if (isReverse) return &(nodeArray[i-1]);
+    else {
         Node *node = nodeStack.top();
         nodeStack.pop();
         return node;
     }
 }
 
-inline vector<Node * > *getChildrenNodes(Node *node, bool isReverse) {
-    return isReverse ? &(node->inEdges) : &(node->outEdges);
+inline vector<Node * > *getAccessibleNodes(Node *node, bool isReverse) {
+    return isReverse ? &(node->parents) : &(node->children);
 }
 
 /*
@@ -73,59 +86,38 @@ void DFS(Node *startNode, bool isReverse) {
     stack<Node * >dfsStack;
     dfsStack.push(startNode);
 
-#if PRINT_DFS_DETAILS
-    if (isReverse) {
-        printf("Starting reverse DFS:\n");
-    } else {
-        printf("Starting second DFS:\n");
-    }
-#endif
-
     while (!dfsStack.empty()) {
         // Inspect the top node in the stack.
         Node *node = dfsStack.top();
         dfsStack.pop();
         visitNode(node,isReverse);
         
-        vector<Node * > *childrenNodes = getChildrenNodes(node,isReverse);
-        if ((*childrenNodes).empty()) {
+        vector<Node * > *accessibleNodes = getAccessibleNodes(node,isReverse);
+        if ((*accessibleNodes).empty()) {
             // If there are no accessible nodes, then it's either a
             // leaf node or a node that has already been visited.
             if (isReverse) {
-                if (!node->isMemberOfNodeStack) {
-                    node->isMemberOfNodeStack = true;
-                    nodeStack.push(node);
-                }
+                if(!isNodeMemberOfNodeStack(node)) addNodeToNodeStack(node);
             } else {
-		        if (!node->isMemberOfSCC) {
-			        node->isMemberOfSCC = true;
+                if (!isNodeMemberOfSCC(node)) {
+                    addNodeToSCC(node);
 			        sccSize++;
 		        }
 	        }
-
-#if PRINT_DFS_DETAILS
-            printf("\tNode %d explored.\n", node->label);
-#endif
-
         } else {
             // If there are nodes, we want to do a DFS on all these
             // children nodes, so we add them to the DFS stack.
             dfsStack.push(node);
-            int numberOfChildren = (*childrenNodes).size();
-            for (int i = 0; i < numberOfChildren; i++) {
-                Node *childNode = (*childrenNodes).back();
-                if (!isNodeVisited(childNode,isReverse)) {
-                    dfsStack.push(childNode);
+            int numberOfAccessibleNodes = (*accessibleNodes).size();
+            for (int i = 0; i < numberOfAccessibleNodes; i++) {
+                Node *accessibleNode = (*accessibleNodes).back();
+                if (!isNodeVisited(accessibleNode,isReverse)) {
+                    dfsStack.push(accessibleNode);
                 }
-    		    (*childrenNodes).pop_back();
+    		    (*accessibleNodes).pop_back();
             }
         }
     }
-    
-#if PRINT_DFS_DETAILS
-    if (!isReverse) printf("\tSCC Size = %d",sccSize);
-    printf("\n\n");
-#endif
 
     if (!isReverse) sccSizes.push(sccSize);
 }
@@ -133,9 +125,8 @@ void DFS(Node *startNode, bool isReverse) {
 void DFSLoop(bool isReverse) {
     for (int i = numNodes; i > 0; i--) {
         Node *node = getNode(i,isReverse);
-        if (!isNodeVisited(node,isReverse)) {
+        if (!isNodeVisited(node,isReverse)) 
             DFS(node,isReverse);
-        }
     }
 }
 
@@ -149,22 +140,15 @@ void setNumberOfNodes(int numberOfNodes) {
     
     Node node;
     for (int i = 0; i < numberOfNodes; i++) {
-        node.label = i+1;
         memcpy(&nodeArray[i],&node,sizeof(node));
     }
 }
 
-void setNumberOfEdges(int numberOfEdges) {
-    // We don't use this data yet, but it might come in hand later.
-}
-
-//allocate memory for the vector? malloc each individual one? 
-
 void addEdge(int srcNodeIndex, int dstNodeIndex) {
     Node *srcNode = &nodeArray[srcNodeIndex - 1];
     Node *dstNode = &nodeArray[dstNodeIndex - 1];
-    (srcNode->outEdges).push_back(dstNode);
-    (dstNode->inEdges).push_back(srcNode);
+    (srcNode->children).push_back(dstNode);
+    (dstNode->parents).push_back(srcNode);
 }
 
 bool readGraphIntoArray(char *inputFile) {
@@ -181,18 +165,12 @@ bool readGraphIntoArray(char *inputFile) {
         int numNodes, numEdges;
         file >> numNodes >> numEdges;
         setNumberOfNodes(numNodes);
-        setNumberOfEdges(numEdges); //doesnt do anything 
         
         while(!file.eof()) {
             int start,end;
             file >> start >> end;
             
             addEdge(start,end);
-
-#if PRINT_INPUT_FILE
-            printf("%d %d\n", start, end);
-#endif
-
         }
     }
     
@@ -225,29 +203,9 @@ void populateOutArray(int out[5]) {
  * out[3] = 0
  * out[4] = 0
  */
-
-void printNodeArray() {
-    for (int i = 0; i < numNodes; i++ ) {
-        Node *node = &nodeArray[i];
-        printf("node: %d\n", i+1); 
-        printf("\tIncoming Edges:\n");
-        for (int j = 0; j < node->inEdges.size(); j++) {
-            printf("\t  %d\n",(node->inEdges)[j]->label);
-        }
-        printf("\tOutgoing Edges:\n");
-        for (int j = 0; j < node->outEdges.size(); j++) {
-            printf("\t  %d\n",(node->outEdges)[j]->label);
-        }
-    }
-}
-
 void findSccs(char* inputFile, int out[5])
 {
     bool readSuccess = readGraphIntoArray(inputFile);
-
-#if PRINT_NODE_ARRAY
-    printNodeArray();
-#endif
 
     if (readSuccess) {
         DFSLoop(true);
