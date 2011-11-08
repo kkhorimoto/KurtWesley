@@ -12,7 +12,6 @@ using namespace std;
  */
 
 typedef struct Node {
-    
     struct Node *leader;
     vector<Node * > outEdges, inEdges;
     bool visited, reverseVisited;
@@ -116,9 +115,8 @@ void DFSLoop(bool isReverse) {
  * File Reading
  */
 
-
-
 void setNumberOfNodes(int numberOfNodes) {
+    numNodes = numberOfNodes;
     nodeArray = (Node *)malloc(numberOfNodes * sizeof(Node));
     
     Node node;
@@ -136,8 +134,6 @@ void setNumberOfEdges(int numberOfEdges) {
 void addEdge(int srcNodeIndex, int dstNodeIndex) {
     Node *srcNode = &nodeArray[srcNodeIndex - 1];
     Node *dstNode = &nodeArray[dstNodeIndex - 1];
-    //  vector<Node *> test = srcNode->outEdges;  //does not allocate
-    // test.push_back(dstNode);
     (srcNode->outEdges).push_back(dstNode);
     (dstNode->inEdges).push_back(srcNode);
     srcNode->label = srcNodeIndex;
@@ -145,8 +141,6 @@ void addEdge(int srcNodeIndex, int dstNodeIndex) {
 }
 
 bool readGraphIntoArray(char *inputFile) {
-    
-    
     ifstream file;
     file.open(inputFile);
     char * buffer;
@@ -200,9 +194,26 @@ void populateOutArray(int out[5]) {
  * out[3] = 0
  * out[4] = 0
  */
+
+void printNodeArray() {
+    for (int i = 0; i < numNodes; i++ ) {
+        Node *node = &nodeArray[i];
+        printf("node: %d\n", i+1); 
+        printf("\tIncoming Edges:\n");
+        for (int j = 0; j < node->inEdges.size(); j++) {
+            printf("\t  %d\n",(node->inEdges)[j]->label);
+        }
+        printf("\tOutgoing Edges:\n");
+        for (int j = 0; j < node->outEdges.size(); j++) {
+            printf("\t  %d\n",(node->outEdges)[j]->label);
+        }
+    }
+}
+
 void findSccs(char* inputFile, int out[5])
 {
     bool readSuccess = readGraphIntoArray(inputFile);
+    printNodeArray();
     if (readSuccess) {
         DFSLoop(true);
     	DFSLoop(false);
