@@ -4,7 +4,6 @@
 #include <stack>
 #include <queue>
 #include <stdbool.h>
-#include <string.h>
 
 using namespace std;
 
@@ -12,11 +11,13 @@ using namespace std;
  * Node struct definition.
  */
 
-typedef struct node {
-    struct node *leader;
-    vector<struct node * > outEdges, inEdges;
+typedef struct Node {
+    
+    struct Node *leader;
+    vector<Node * > outEdges, inEdges;
     bool visited, reverseVisited;
-} Node;
+    int label;
+};
 
 /*
  * Global Variables
@@ -35,7 +36,7 @@ void visitNode(Node *node, bool isReverse) {
     if (node) {
         bool *visitedBool = isReverse ? &(node->reverseVisited) : &(node->visited);
         *visitedBool = true;
-
+        
         node->leader = baseNode;
     }
 }
@@ -67,7 +68,7 @@ inline void clearAccessibleNodes(Node *node, bool isReverse) {
 
 void DFS(Node *startNode, bool isReverse) {
     int sccSize = 0;
-
+    
     stack<Node * >dfsStack;
     dfsStack.push(startNode);
     while (!dfsStack.empty()) {
@@ -75,7 +76,7 @@ void DFS(Node *startNode, bool isReverse) {
         Node *node = dfsStack.top();
         dfsStack.pop();
         visitNode(node,isReverse);
-
+        
         vector<Node * > *accessibleNodes = getAccessibleNodes(node,isReverse);
         if ((*accessibleNodes).empty()) {
             // If there are no accessible nodes, then it's either a
@@ -95,7 +96,7 @@ void DFS(Node *startNode, bool isReverse) {
             clearAccessibleNodes(node,isReverse);
         }
     }
-
+    
     if (!isReverse) sccSizes.push(sccSize);
 }
 
@@ -115,9 +116,11 @@ void DFSLoop(bool isReverse) {
  * File Reading
  */
 
+
+
 void setNumberOfNodes(int numberOfNodes) {
     nodeArray = (Node *)malloc(numberOfNodes * sizeof(Node));
-
+    
     Node node;
     for (int i = 0; i < numberOfNodes; i++) {
         memcpy(&nodeArray[i],&node,sizeof(node));
@@ -128,40 +131,48 @@ void setNumberOfEdges(int numberOfEdges) {
     // We don't use this data yet, but it might come in hand later.
 }
 
+//allocate memory for the vector? malloc each individual one? 
+
 void addEdge(int srcNodeIndex, int dstNodeIndex) {
     Node *srcNode = &nodeArray[srcNodeIndex - 1];
     Node *dstNode = &nodeArray[dstNodeIndex - 1];
+    //  vector<Node *> test = srcNode->outEdges;  //does not allocate
+    // test.push_back(dstNode);
     (srcNode->outEdges).push_back(dstNode);
     (dstNode->inEdges).push_back(srcNode);
+    srcNode->label = srcNodeIndex;
+    dstNode->label = dstNodeIndex;
 }
 
 bool readGraphIntoArray(char *inputFile) {
-  ifstream file;
-  file.open(inputFile);
-  char * buffer;
-  
-  if(!file) {
-    cout << endl << "Error opening file " << inputFile; 
-    return false;
-  }
-
-  if(file.is_open()) {
-    int numNodes, numEdges;
-    file >> numNodes >> numEdges;
-    setNumberOfNodes(numNodes);
-    setNumberOfEdges(numEdges); //doesnt do anything 
     
-    while(!file.eof()) {
-      int start,end;
-      file >> start >> end;
-
-      addEdge(start,end);
-      printf("%d %d\n", start, end);
+    
+    ifstream file;
+    file.open(inputFile);
+    char * buffer;
+    
+    if(!file) {
+        cout << endl << "Error opening file " << inputFile; 
+        return false;
     }
-  }
-
-  file.close();
-  return true;
+    
+    if(file.is_open()) {
+        int numNodes, numEdges;
+        file >> numNodes >> numEdges;
+        setNumberOfNodes(numNodes);
+        setNumberOfEdges(numEdges); //doesnt do anything 
+        
+        while(!file.eof()) {
+            int start,end;
+            file >> start >> end;
+            
+            addEdge(start,end);
+            printf("%d %d\n", start, end);
+        }
+    }
+    
+    file.close();
+    return true;
 }
 
 
@@ -193,7 +204,7 @@ void findSccs(char* inputFile, int out[5])
 {
     bool readSuccess = readGraphIntoArray(inputFile);
     if (readSuccess) {
-  	    DFSLoop(true);
+        DFSLoop(true);
     	DFSLoop(false);
         populateOutArray(out);
     }
@@ -213,15 +224,14 @@ int main(int argc, char* argv[])
     int sccSizes[] = {0, 0, 0, 0, 0};
     char* inputFile = argv[1];
     char* outputFile = argv[2];
-
+    
     findSccs(inputFile, sccSizes);
 	
     // Output the first 5 sccs into a file.
     ofstream os;
     os.open(outputFile);
     os << sccSizes[0] << "\t" << sccSizes[1] << "\t" << sccSizes[2] <<
-      "\t" << sccSizes[3] << "\t" << sccSizes[4];
+    "\t" << sccSizes[3] << "\t" << sccSizes[4];
     os.close();
     return 0;
 }
-
