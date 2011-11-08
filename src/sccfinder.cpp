@@ -16,7 +16,6 @@ using namespace std;
  */
 
 typedef struct Node {
-    struct Node *leader;
     vector<Node * > outEdges, inEdges;
     bool visited, reverseVisited, isMemberOfSCC;
     int label;
@@ -27,7 +26,7 @@ typedef struct Node {
  */
 
 int numNodes;
-Node *nodeArray, *baseNode;
+Node *nodeArray;
 stack<Node * > nodeStack;
 priority_queue<int> sccSizes;
 
@@ -39,8 +38,6 @@ void visitNode(Node *node, bool isReverse) {
     if (node) {
         bool *visitedBool = isReverse ? &(node->reverseVisited) : &(node->visited);
         *visitedBool = true;
-        
-        node->leader = baseNode;
     }
 }
 
@@ -128,12 +125,10 @@ void DFS(Node *startNode, bool isReverse) {
 }
 
 void DFSLoop(bool isReverse) {
-    baseNode = NULL;
     for (int i = numNodes; i > 0; i--) {
         Node *node = getNode(i,isReverse);
         if (!isReverse) nodeStack.pop();
         if (!isNodeVisited(node,isReverse)) {
-            baseNode = node;
             DFS(node,isReverse);
         }
     }
