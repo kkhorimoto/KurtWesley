@@ -154,7 +154,6 @@ void addEdge(int srcNodeIndex, int dstNodeIndex) {
 bool readGraphIntoArray(char *inputFile) {
     ifstream file;
     file.open(inputFile);
-    char * buffer;
     
     if(!file) {
         cout << endl << "Error opening file " << inputFile; 
