@@ -25,7 +25,7 @@ struct compFn {
 };
 
 
-void createRandomGraph(int numNodes, int numEdges, set<nodePair, compFn> graphSet) {
+void createRandomGraph(int numNodes, int numEdges, set<nodePair, compFn> &graphSet) {
     while (numEdges > 0) {
         
       //  nodePair *n = (nodePair*)malloc(sizeof(nodePair));
@@ -36,6 +36,8 @@ void createRandomGraph(int numNodes, int numEdges, set<nodePair, compFn> graphSe
         
         if (n.start != n.end) {
             int prevSize = graphSet.size();
+            cout << "added: " << n.start << " " << n.end << "\n";
+            
             graphSet.insert(n);
             if (graphSet.size() == prevSize + 1)
                 numEdges--;
@@ -60,8 +62,6 @@ int main(int argc, char* argv[])
     set<nodePair, compFn> graphSet;
     createRandomGraph(numNodes, numEdges, graphSet);
     
-       
-    
     ofstream os;
     os.open(outputFile);
     
@@ -71,6 +71,7 @@ int main(int argc, char* argv[])
 
     for (it = graphSet.begin();it != graphSet.end(); it++) {
         nodePair n = *it;  //pointer?
+        cout << "printing: " << n.start << " " << n.end << "\n";
         os << n.start << " " << n.end << "\n";
     }
     
