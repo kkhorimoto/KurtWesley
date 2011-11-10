@@ -5,6 +5,17 @@ make clean
 make
 make randomgraph
 
+mkdir ./part3out/
+mkdir ./part3out/graphs
+mkdir ./part3out/sccOut
+mkdir ./part3out/sccReal
+
+./sccfinder ./realnetworks/email_eu_all.txt ./part3out/sccReal/Email-EuAllScc
+./sccfinder ./realnetworks/email_enron.txt ./part3out/sccReal/Email-EnronScc
+./sccfinder ./realnetworks/soc_slashdot_0811.txt ./part3out/sccReal/SlashdotScc
+./sccfinder ./realnetworks/soc_epinions.txt ./part3out/sccReal/EpinionsScc
+./sccfinder ./realnetworks/web_google.txt ./part3out/sccReal/Web-GoogleScc
+
 #Produce Random graphs
 ./randomgraph 265216 420050 ./part3out/graphs/Email-EuAllSim
 ./randomgraph 36694 367665 ./part3out/graphs/Email-EnronSim
