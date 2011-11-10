@@ -1,0 +1,23 @@
+#!/bin/sh
+
+#Compile and clean
+make clean
+make
+make randomgraph
+
+#Produce Random graphs
+./randomgraph 265216 420050 ./part3out/graphs/Email-EuAllSim
+./randomgraph 36694 367665 ./part3out/graphs/Email-EnronSim
+./randomgraph 77362 905471 ./part3out/graphs/SlashdotSim
+./randomgraph 75880 508840 ./part3out/graphs/EpinionsSim
+./randomgraph 875714 5105043 ./part3out/graphs/Web-GoogleSim
+
+
+#Generate SCCs
+./sccfinder ./part3out/graphs/Email-EuAllSim ./part3out/sccOut/Email-EuAllScc
+./sccfinder ./part3out/graphs/Email-EnronSim ./part3out/sccOut/Email-EnronScc
+./sccfinder ./part3out/graphs/SlashdotSim ./part3out/sccOut/SlashdotScc
+./sccfinder ./part3out/graphs/EpinionsSim ./part3out/sccOut/EpinionsScc
+./sccfinder ./part3out/graphs/Web-GoogleSim ./part3out/sccOut/Web-GoogleScc
+
+
