@@ -9,14 +9,7 @@ using namespace std;
 int numNodes, numEdges;
 
 inline int getRandomNodeNumber() {
-    short int firstHalf = rand();
-    short int secondHalf = rand();
-    unsigned int nodeNumber;
-
-    memcpy(&nodeNumber,&firstHalf,sizeof(firstHalf));
-    memcpy((short int *)(&nodeNumber) + 1, &secondHalf, sizeof(secondHalf));
-
-    return nodeNumber % numNodes + 1;
+    return 1 + (int)((double)numNodes * rand() / (RAND_MAX + 1.0));
 }
 
 int main(int argc, char* argv[])
