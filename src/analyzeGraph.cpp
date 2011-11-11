@@ -6,8 +6,9 @@
 #include <map>
 
 using namespace std;
+int numNodes;
 
-void mapGraph (char *inputFile, map<int, int> frequencyMap) {
+void mapGraph (char *inputFile, map<int, int> &frequencyMap) {
     ifstream file;
     file.open(inputFile);
 
@@ -18,26 +19,23 @@ void mapGraph (char *inputFile, map<int, int> frequencyMap) {
     
     if(file.is_open()) {
         int curr, trash;
-        int prev = 1; 
-        int count = 0;
-        int max = 0;
-        file >> trash >> trash;
+        file >> numNodes >> trash;
         
         while(!file.eof()) {
             file >> curr >> trash;
             int count = frequencyMap[curr];
             if(count == 0) {
-                frequencyMap.insert(pair<int,int> (curr, 1));
+                frequencyMap[curr] = 1;
             } else {
-                frequencyMap.insert(pair<int,int> (curr, count+1));
+                int value = count + 1;
+                frequencyMap[curr] = value;
             }
         }
-    
     file.close();
     }
 }
 
-int getHighestNodeInGraph (map<int, int> graph) {
+int getHighestNodeInGraph (map<int, int> &graph) {
     map<int, int>::iterator it;
    
     int highestDegreeNode;
@@ -51,15 +49,14 @@ int getHighestNodeInGraph (map<int, int> graph) {
             highestDegreeNode = curr; 
         }
     }
-    return highestDegreeNode;
+    return max;
 }
         
     
 int main(int argc, char* argv[]) {
     char* inputFile = argv[1];
     char* outputFile = argv[2];
-    
-    int highestDegreeNode = 0;
+
     
     map<int, int> frequencyMap;
     
