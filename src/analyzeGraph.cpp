@@ -69,11 +69,13 @@ int findIsolatedNodes(char * inputFile) {
     if(file.is_open()) {
         int curr, trash;
         file >> numNodes >> trash;
+        
         while(!file.eof()) {
             file >> curr;
             uniqueNodes.insert(curr);
         }
     }
+    file.close();
     return numNodes - uniqueNodes.size();
 }
 
@@ -87,16 +89,16 @@ int main(int argc, char* argv[]) {
     
     int numIsolatedNodes = findIsolatedNodes(inputFile);
     
-    
+    /*
     ofstream os;
     os.open("./analyzeGraphResults");
+    */
     
-    
-    os << highestDegreeNode << "\n";
-    os << numIsolatedNodes << "\n";
+    cout << highestDegreeNode << "\n";
+    cout << numIsolatedNodes << "\n";
     
         
-    os.close();
+    //3os.close();
     return 0;
 }
 
