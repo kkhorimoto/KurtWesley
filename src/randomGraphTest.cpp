@@ -21,6 +21,8 @@ bool isGraphSingleSCC(int nodeTestNumber, int edgeTestNumber, int graphTestNumbe
     strcat (inputFilepath, buffer);
     sprintf(buffer, "%d",  graphTestNumber);
     strcat(inputFilepath, buffer);
+
+    printf("inputFilepath: %s\n",inputFilepath);
   
     ifstream file;
     file.open(inputFilepath);
@@ -29,7 +31,6 @@ bool isGraphSingleSCC(int nodeTestNumber, int edgeTestNumber, int graphTestNumbe
     if (file.is_open()) {
         for (int i = 0; i < 2; i++) {
             file >> sccSize;
-	        cout << sccSize << "\n";
 	        if (i == 0 && sccSize == 0 || i != 0 && sccSize != 0) {
                 file.close();
                 return false;
@@ -44,7 +45,7 @@ bool isGraphSingleSCC(int nodeTestNumber, int edgeTestNumber, int graphTestNumbe
 void test(int nodeTestNumber, ofstream &os) {
     int numNodes = numNodeArray[nodeTestNumber-1];
 
-    for (int j = 0; j < numEdgeCombinations; j++) {
+    for (int j = 1; j <= numEdgeCombinations; j++) {
         int frequencyOfSCC = 0;
     	int multiplier = (numNodes * (numNodes -1)) / (numEdgeCombinations);
         int numEdges = numNodes + j*multiplier;
