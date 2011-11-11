@@ -6,9 +6,9 @@
 
 using namespace std;
 
-const char *basePath = "./basepath/";
+const char *basePath = "./part2out/";
 const int numNodeArray[] = {100, 1000, 10000, 50000, 100000, 200000, 300000, 500000};
-const int numEdgeCombinations = 5;
+const int numEdgeCombinations = 100;
 const int numTestsPerEdgeCombo = 100;
 
 
@@ -20,19 +20,20 @@ bool isGraphSingleSCC(int nodeTestNumber, int edgeTestNumber, int graphTestNumbe
     sprintf(buffer, "%d/", edgeTestNumber);
     strcat (inputFilepath, buffer);
     sprintf(buffer, "%d",  graphTestNumber);
-
+    strcat(inputFilepath, buffer);
+  
     ifstream file;
     file.open(inputFilepath);
 
+    int sccSize;
     if (file.is_open()) {
-        for (int i = 0; i < 5; i++) {
-            int sccSize;
+        for (int i = 0; i < 2; i++) {
             file >> sccSize;
-
-            if (i == 0 && sccSize == 0 || i != 0 && sccSize != 0) {
+	     cout << sccSize << "\n";
+	     if (i == 0 && sccSize == 0 || i != 0 && sccSize != 0) {
                 file.close();
                 return false;
-            }
+            } 
         }
     }
 
@@ -45,9 +46,13 @@ void test(int nodeTestNumber, ofstream &os) {
 
     for (int j = 0; j < numEdgeCombinations; j++) {
         int frequencyOfSCC = 0;
-        int numEdges = numNodes + j*(numNodes^2 - numNodes);
+	int multiplier = (numNodes * (numNodes -1)) / (numEdgeCombinations);
+        int numEdges = numNodes + j*multiplier;
+	//cout << numEdges << "\n";
         for (int k = 0; k < numTestsPerEdgeCombo; k++) {
-            if (isGraphSingleSCC(nodeTestNumber,j,k+1)) frequencyOfSCC++;
+            if (isGraphSingleSCC(nodeTestNumber,j,k+1)) {
+		frequencyOfSCC++;
+            }	
         }
         double percentage = (double)frequencyOfSCC / (double)numTestsPerEdgeCombo;
 

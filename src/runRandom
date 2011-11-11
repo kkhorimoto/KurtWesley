@@ -16,7 +16,7 @@ do
      mkdir ./randomOut/$k 
      mkdir ./part2out/$k
 
-for j in {0..4}
+for j in {1..100}
 
 do
      mkdir ./randomOut/$k/$j 
@@ -24,38 +24,39 @@ do
 
 done
 done
-
-for j in {0..4}
+#value of m
+for j in {1..100}
 do
-
-for i in {1..100}
+#change number of random graphs for each value of m
+for i in {0..100}
 do 
     
-    ./randomgraph 100 100+1980*j ./randomOut/1/$j/$i
+    ./randomgraph 100 100+99*j ./randomOut/1/$j/$i
     ./sccfinder ./randomOut/1/$j/$i ./part2out/1/$j/$i
 
+echo $i
 
-: <<'END'
-
-    ./randomgraph 1000 1000+19980*j ./randomOut/2/$j/$i
+    ./randomgraph 1000 1000+999000*j ./randomOut/2/$j/$i
     ./sccfinder ./randomOut/2/$j/$i ./part2out/2/$j/$i
 
-    ./randomgraph 10000 10000+199980*j ./randomOut/3/$j/$i
+:<<'END'
+echo $i
+    ./randomgraph 10000 10000+999900*j ./randomOut/3/$j/$i
     ./sccfinder ./randomOut/3/$j/$i ./part2out/3/$j/$i
-
-    ./randomgraph 50000 50000+2499990000*j ./randomOut/4/$j/$i
+echo $i
+    ./randomgraph 50000 50000+24999500 *j ./randomOut/4/$j/$i
     ./sccfinder ./randomOut/4/$j/$i ./part2out/4/$j/$i
-
-    ./randomgraph 100000 100000+9999980000*j ./randomOut/5/$j/$i
+echo $i
+    ./randomgraph 100000 100000+99999000*j ./randomOut/5/$j/$i
     ./sccfinder ./randomOut/5/$j/$i ./part2out/5/$j/$i
-
-    ./randomgraph 200000 200000+39999960000*j ./randomOut/6/$j/$i
+echo $i
+    ./randomgraph 200000 200000+399998000*j ./randomOut/6/$j/$i
     ./sccfinder ./randomOut/6/$j/$i ./part2out/6/$j/$i
-
-    ./randomgraph 300000 300000+89999940000*j ./randomOut/7/$j/$i
+echo $i
+    ./randomgraph 300000 300000+899997000*j ./randomOut/7/$j/$i
     ./sccfinder ./randomOut/7/$j/$i ./part2out/7/$j/$i
-    
-    ./randomgraph 500000 500000+249999900000*j ./randomOut/8/$j/$i
+echo $i
+    ./randomgraph 500000 500000+2499995000*j ./randomOut/8/$j/$i
     ./sccfinder ./randomOut/8/$j/$i ./part2out/8/$j/$i
 END
 
