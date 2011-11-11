@@ -29,8 +29,8 @@ bool isGraphSingleSCC(int nodeTestNumber, int edgeTestNumber, int graphTestNumbe
     if (file.is_open()) {
         for (int i = 0; i < 2; i++) {
             file >> sccSize;
-	     cout << sccSize << "\n";
-	     if (i == 0 && sccSize == 0 || i != 0 && sccSize != 0) {
+	        cout << sccSize << "\n";
+	        if (i == 0 && sccSize == 0 || i != 0 && sccSize != 0) {
                 file.close();
                 return false;
             } 
@@ -46,15 +46,14 @@ void test(int nodeTestNumber, ofstream &os) {
 
     for (int j = 0; j < numEdgeCombinations; j++) {
         int frequencyOfSCC = 0;
-	int multiplier = (numNodes * (numNodes -1)) / (numEdgeCombinations);
+    	int multiplier = (numNodes * (numNodes -1)) / (numEdgeCombinations);
         int numEdges = numNodes + j*multiplier;
-	//cout << numEdges << "\n";
         for (int k = 0; k < numTestsPerEdgeCombo; k++) {
             if (isGraphSingleSCC(nodeTestNumber,j,k+1)) {
-		frequencyOfSCC++;
+		        frequencyOfSCC++;
             }	
         }
-        double percentage = (double)frequencyOfSCC / (double)numTestsPerEdgeCombo;
+        double percentage = 100.0 * (double)frequencyOfSCC / (double)numTestsPerEdgeCombo;
 
         os << "N = " << numNodes << "\n";
         os << "M = " << numEdges << "\n";
