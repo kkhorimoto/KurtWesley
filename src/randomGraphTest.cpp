@@ -56,8 +56,7 @@ void test(int nodeTestNumber, ofstream &os) {
         }
         double percentage = 100.0 * (double)frequencyOfSCC / (double)numTestsPerEdgeCombo;
 
-        os << "N = " << numNodes << "\n";
-        os << "M = " << numEdges << "\n";
+        os << "Trial = " << j << "\n";
         os << "% = " << percentage << "\n\n";
     }
 }
