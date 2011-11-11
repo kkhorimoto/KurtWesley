@@ -21,7 +21,6 @@ for j in {1..100}
 do
      mkdir ./randomOut/$k/$j 
      mkdir ./part2out/$k/$j
-
 done
 done
 #value of m
@@ -31,15 +30,15 @@ do
 for i in {0..100}
 do 
     
-    ./randomgraph 100 100+99*j ./randomOut/1/$j/$i
+    ./randomgraph 100 `expr 435 + 3 \* $j` ./randomOut/1/$j/$i
     ./sccfinder ./randomOut/1/$j/$i ./part2out/1/$j/$i
 
-echo $i
-
-    ./randomgraph 1000 1000+999000*j ./randomOut/2/$j/$i
-    ./sccfinder ./randomOut/2/$j/$i ./part2out/2/$j/$i
+    sleep .1 
 
 :<<'END'
+    ./randomgraph 1000 `expr 1000 + 999000 \* $`j ./randomOut/2/$j/$i
+    ./sccfinder ./randomOut/2/$j/$i ./part2out/2/$j/$i
+
 echo $i
     ./randomgraph 10000 10000+999900*j ./randomOut/3/$j/$i
     ./sccfinder ./randomOut/3/$j/$i ./part2out/3/$j/$i
