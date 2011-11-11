@@ -164,6 +164,7 @@ bool readGraphIntoArray(char *inputFile) {
         int numNodes, numEdges;
         file >> numNodes >> numEdges;
         setNumberOfNodes(numNodes);
+        printf("M/N = %f",(double)numEdges/(double)numNodes);
         
         while(!file.eof()) {
             int start,end;
@@ -184,6 +185,7 @@ bool readGraphIntoArray(char *inputFile) {
 
 void populateOutArray(int out[5]) {
     int numberOfSCCs = sccSizes.size();
+    printf("number of SCCs = %d\n",numberOfSCCs);
     for (int i = 0; i < numberOfSCCs && i < 5; i++) {
         out[i] = sccSizes.top();
         sccSizes.pop();
